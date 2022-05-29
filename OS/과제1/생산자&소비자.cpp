@@ -1,38 +1,31 @@
-#include <pthread.h>
+﻿#include <pthread.h>
 #include <iostream>
 #include <queue>
 
 using namespace std;
 
-void* production(void* arg);
-void* consumption(void* arg);
+queue<int> q;
 
-queue<int> que;
+void* product(void* arg);
+void* consume(void* arg);
 
+int x;
 int main() {
-	pthread_t producter;
-	pthread_t customer;
-
-	pthread_create(&producter, NULL, production, NULL);
-	pthread_create(&customer, NULL, consumption, NULL);
-	
+	pthread_t productor, consumer;
+	pthread_create(&productor, NULL, product, NULL);
+	pthread_create(&consumer, NULL, consume, NULL);
+	pthread_join(productor, NULL);
+	pthread_join(consumer, NULL);
 }
 
-void* production(void* arg)
-{
-	while (1)
-	{
-		cout << "product : " << que.size() + 1 << endl;
-		que.push(que.size() + 1);
-	}
+void* product(void* arg) {
+	q.push(q.size());
+	cout << pthread_self() << " producted " << q.size() << endl;
 	return NULL;
 }
-void* consumption(void* arg)
-{
-	while (1)
-	{
-		cout << "consume : " << que.front() << endl;
-		que.pop();
-	}
+void* consume(void* arg) {
+	cout << pthread_self() << " consumed " << q.front() << endl;
+	q.pop();
 	return NULL;
 }
+
